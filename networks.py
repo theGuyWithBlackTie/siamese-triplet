@@ -36,7 +36,7 @@ class EmbeddingNet(nn.Module):
 
 class ClassificationNet(nn.Module):
     def __init__(self, embedding_net, n_classes):
-        super(ClassificationNet(), self).__init__()
+        super(ClassificationNet, self).__init__()
         self.embedding_net = embedding_net
         self.non_linear    = nn.PReLU()
         self.fc1           = nn.Linear(2, n_classes)
