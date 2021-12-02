@@ -14,3 +14,38 @@ class EmbeddingNet(nn.Module):
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5), nn.PReLU(), nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5), nn.PReLU(), nn.MaxPool2d(kernel_size=2, stride=2)
         )
+
+        # this layer generates the final embedding which is of just two dimensions thats why there is '2' in last linear layer
+        self.fc = nn.Sequential(
+            nn.Linear(64*4*4, 256), nn.PReLU(),
+            nn.Linear(256, 256), nn.PReLU(),
+            nn.Linear(256, 2)
+        )
+
+
+    def forward(self, x):
+        output = self.convnet(x)
+        output = output.view(output.size()[0], -1)
+        output = self.fc(output)
+        return output
+
+    def get_embedding(self, x):
+        return self.forward(x)
+
+
+
+class ClassificationNet(nn.Module):
+    def __init__(self, embedding_net, n_classes):
+        super(ClassificationNet(), self).__init__()
+        self.embedding_net = embedding_net
+        self.non_linear    = nn.PReLU()
+        self.fc1           = nn.Linear(2, n_classes)
+
+    def forward(self, x):
+        output = self.embedding_net(x)
+        output = self.non_linear(output)
+        output = F.log_softmax(output)
+        return output
+
+    def get_embedding(self, x):
+        return self.non_linear(self.embedding_net(x))
