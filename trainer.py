@@ -1,6 +1,9 @@
 import torch
 import numpy as np
 
+#
+# This function fits the model with the dataset. 
+#
 def fit(train_loader, val_loader, model, loss_fn, optimizer, scheduler, n_epochs, cuda, log_interval, metrics=[], start_epoch=0):
     for epoch in range(0, start_epoch):
         scheduler.step()
@@ -52,11 +55,13 @@ def train_epoch(train_loader, model, loss_fn, optimizer, cuda, log_interval, met
             outputs = (outputs,)
 
         loss_inputs = outputs
+        
         if target is not None:
             target = (target,)
             loss_inputs += target
 
         loss_outputs = loss_fn(*loss_inputs)
+        
         loss = loss_outputs[0] if type(loss_outputs) in (tuple, list) else loss_outputs
         losses.append(loss.item())
         total_loss += loss.item()

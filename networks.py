@@ -33,19 +33,43 @@ class EmbeddingNet(nn.Module):
         return self.forward(x)
 
 
-
+#
+# Declaring and defininf the Classification Net which would be served in establishing Baseline. This will classify the embeddings
+# generated from Embedding Net into one of the ten classes.return
+#
 class ClassificationNet(nn.Module):
     def __init__(self, embedding_net, n_classes):
         super(ClassificationNet, self).__init__()
+
+        # This is the EmbeddingNet class object
         self.embedding_net = embedding_net
+
+        # Introducing non-linearity
         self.non_linear    = nn.PReLU()
+
+        # Classification layer. Input size is 2 as thats the embedding size in Embedding Net.
         self.fc1           = nn.Linear(2, n_classes)
 
     def forward(self, x):
         output = self.embedding_net(x)
         output = self.non_linear(output)
-        output = F.log_softmax(output)
+        output = F.log_softmax(self.fc1(output), dim=-1)
         return output
 
     def get_embedding(self, x):
         return self.non_linear(self.embedding_net(x))
+
+
+
+class SiameseNet(nn.Module):
+    def __init__(self, embedding_net):
+        super(SiameseNet, self).__init__()
+        self.embedding_net = embedding_net
+
+    def forward(self, x1, x2):
+        output_1 = self.embedding_net(x1)
+        output_2 = self.embedding_net(x2)
+        return output_1, output_2
+
+    def get_embedding(self, x):
+        return self.embedding_net(x)
