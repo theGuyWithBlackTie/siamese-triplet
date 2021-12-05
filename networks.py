@@ -92,5 +92,5 @@ class TripletNet(nn.Module):
         return output1, output2, output3
 
 
-    def ger_embedding(self, x):
+    def get_embedding(self, x):
         return self.embedding_net(x)

@@ -92,7 +92,11 @@ class SiameseMNIST(Dataset):
 
 
 
-
+#
+# TripletMNIST class generates 3 images as input for the model. One image is the anchor, 2nd image has same label as anchor image &
+# 3rd image has different label from anchor image.return
+# Code is similar to SiameseMNIST just that it outputs 3 images rather than 2.
+#
 class TripletMNIST(Dataset):
     def __init__(self, mnist_dataset):
         self.mnist_dataset = mnist_dataset
@@ -137,7 +141,7 @@ class TripletMNIST(Dataset):
             positive_index = index
 
             while positive_index == index:
-                positive_index = np.random.choice(self.label_to_indices[index])
+                positive_index = np.random.choice(self.label_to_indices[label1])
 
             negative_label = np.random.choice(list(self.labels_set - set([label1])))
             negative_index = np.random.choice(self.label_to_indices[negative_label])
